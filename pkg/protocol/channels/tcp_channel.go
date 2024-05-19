@@ -1,11 +1,13 @@
 package channels
 
 import (
-	"encoding/json"
 	"net"
 
+	jsoniter "github.com/json-iterator/go"
 	"github.com/oguz-yilmaz/file-system-server/pkg/protocol"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 type TCPChannel struct {
 	conn net.Conn

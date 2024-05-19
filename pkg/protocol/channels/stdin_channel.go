@@ -1,7 +1,6 @@
 package channels
 
 import (
-	"encoding/json"
 	"os"
 
 	"github.com/oguz-yilmaz/file-system-server/pkg/protocol"

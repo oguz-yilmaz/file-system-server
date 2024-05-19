@@ -31,3 +31,18 @@ type Error struct {
 	Message string `json:"message"`
 	Data    string `json:"data,omitempty"` // Optional: detailed error information etc.
 }
+
+const (
+	METHOD_CREATE_FILE = "createFile"
+	METHOD_READ_FILE   = "readFile"
+	METHOD_DELETE_FILE = "deleteFile"
+	METHOD_LIST_FILES  = "listFiles"
+	METHOD_CREATE_DIR  = "createDir"
+	METHOD_DELETE_DIR  = "deleteDir"
+	METHOD_LIST_DIRS   = "listDirs"
+	METHOD_MOVE        = "move"
+	METHOD_COPY        = "copy"
+	METHOD_RENAME      = "rename"
+	METHOD_SEARCH      = "search"
+	METHOD_GET_INFO    = "getInfo"
+)

@@ -46,6 +46,35 @@ func (app *App) StartServer() {
 		panic(err)
 	}
 
+	switch data.Method {
+	case protocol.METHOD_CREATE_FILE:
+		fmt.Println("creating file")
+	case protocol.METHOD_READ_FILE:
+		fmt.Println("reading file")
+	case protocol.METHOD_DELETE_FILE:
+		fmt.Println("deleting file")
+	case protocol.METHOD_LIST_FILES:
+		fmt.Println("listing files")
+	case protocol.METHOD_CREATE_DIR:
+		fmt.Println("creating directory")
+	case protocol.METHOD_DELETE_DIR:
+		fmt.Println("deleting directory")
+	case protocol.METHOD_LIST_DIRS:
+		fmt.Println("listing directories")
+	case protocol.METHOD_MOVE:
+		fmt.Println("moving file")
+	case protocol.METHOD_COPY:
+		fmt.Println("copying file")
+	case protocol.METHOD_RENAME:
+		fmt.Println("renaming file")
+	case protocol.METHOD_SEARCH:
+		fmt.Println("searching for file")
+	case protocol.METHOD_GET_INFO:
+		fmt.Println("getting file info")
+	default:
+		fmt.Println("unknown method")
+	}
+
 	fmt.Println("Received :", data)
 }
 

@@ -1,7 +1,12 @@
 package methods
 
+import (
+	"github.com/oguz-yilmaz/file-system-server/pkg/protocol"
+	"github.com/oguz-yilmaz/file-system-server/pkg/protocol/resources"
+)
+
 type CreateFileRequest struct {
-	Request
+	protocol.Request
 
 	Params CreateFileParams `json:"params"`
 }
@@ -22,7 +27,7 @@ type CreateFileParams struct {
 }
 
 type CreateFileResponse struct {
-	Response
+	protocol.Response
 
-	Result TextFile `json:"result"`
+	Result resources.TextFile `json:"result"`
 }
