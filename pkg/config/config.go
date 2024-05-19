@@ -5,6 +5,7 @@ type TransferProtocol string
 const (
 	TCP_RPC  TransferProtocol = "tcp-rpc"
 	HTTP_RPC TransferProtocol = "http-rpc"
+	STD_IN   TransferProtocol = "std-in"
 )
 
 type FileSystemConfig struct {
@@ -28,9 +29,7 @@ func NewDefaultConfig() Config {
 			RootPath: "/default/path",
 		},
 		ProtocolConfig: ProtocolConfig{
-			TransferProtocol: TCP_RPC,
-			Address:          "localhost:8080",
-			Network:          "tcp",
+			TransferProtocol: STD_IN,
 		},
 	}
 }

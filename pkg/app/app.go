@@ -14,10 +14,6 @@ import (
 type App struct {
 }
 
-func (app *App) StartServer() {
-	fmt.Println("server started.")
-}
-
 func makeChannel(config *Conf.Config) (protocol.TransportChannel, error) {
 	switch config.ProtocolConfig.TransferProtocol {
 	case Conf.TCP_RPC:
@@ -29,19 +25,36 @@ func makeChannel(config *Conf.Config) (protocol.TransportChannel, error) {
 
 		return channels.NewTCPChannel(conn), nil
 	case Conf.HTTP_RPC:
-		// Handle HTTP-RPC if needed
-		// This can be implemented similarly to TCPChannel
 		return nil, errors.New("HTTP-RPC is not implemented yet")
-	default:
-		// Default to StdinChannel
+	case Conf.STD_IN:
 		return channels.NewStdinTransport(os.Stdin, os.Stdout), nil
+	default:
+		return nil, errors.New("Unknown protocol")
 	}
+}
+
+func (app *App) StartServer() {
+	conf := Conf.NewDefaultConfig()
+
+	channel, err := makeChannel(&conf)
+	if err != nil {
+		panic(err)
+	}
+
+	data, err := channel.Read()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Received :", data)
 }
 
 func Run(config *Conf.Config, startArgs []string) {
 	app, err := NewApp(config, startArgs)
 	if err == nil {
-		app.StartServer()
+		for {
+			app.StartServer()
+		}
 	}
 
 	if err != nil {
