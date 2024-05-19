@@ -1,6 +1,6 @@
 package protocol
 
-type Transport interface {
+type TransportChannel interface {
 	Read() (*Request, error)
 	Write(*Response) error
 	Close() error

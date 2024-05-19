@@ -13,6 +13,8 @@ type FileSystemConfig struct {
 
 type ProtocolConfig struct {
 	TransferProtocol TransferProtocol `key:"transfer-protocol"`
+	Address          string           `key:"address"`
+	Network          string           `key:"network"`
 }
 
 type Config struct {
@@ -27,6 +29,8 @@ func NewDefaultConfig() Config {
 		},
 		ProtocolConfig: ProtocolConfig{
 			TransferProtocol: TCP_RPC,
+			Address:          "localhost:8080",
+			Network:          "tcp",
 		},
 	}
 }
