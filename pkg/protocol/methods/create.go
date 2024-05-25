@@ -17,13 +17,28 @@ type CreateFileParams struct {
 	 */
 	Name string `json:"name"`
 	/**
+	 * The content of the file
+	 */
+	Content string `json:"text"`
+	/**
 	 * The directory where the file should be created
 	 */
 	Dir string `json:"dir"`
 	/**
-	 * The content of the file
+	 * The type of the file, e.g. text, image, etc.
+	 * Not always possible to infer from the extension, it might not be present
 	 */
-	Text string `json:"text"`
+	FileType string `json:"file-type"`
+	/**
+	 * The permissions of the file, should be sent as decimal number like 438 (octal 0666)
+	 */
+	Permissions int `json:"permissions"`
+}
+
+func NewCreateFileParams() *CreateFileParams {
+	return &CreateFileParams{
+		Permissions: 438, // 0666
+	}
 }
 
 type CreateFileResponse struct {

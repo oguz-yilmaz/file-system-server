@@ -1,13 +1,15 @@
 package protocol
 
+import (
+	jsoniter "github.com/json-iterator/go"
+)
+
 // @see https://www.jsonrpc.org/specification
 type Request struct {
-	RPC    string `json:"jsonrpc"`
-	ID     int    `json:"id"`
-	Method string `json:"method"`
-
-	// We will just specify the type of the params in all the Request types separately
-	// Params
+	RPC    string              `json:"jsonrpc"`
+	ID     int                 `json:"id"`
+	Method string              `json:"method"`
+	Params jsoniter.RawMessage `json:"params"`
 }
 
 type Response struct {

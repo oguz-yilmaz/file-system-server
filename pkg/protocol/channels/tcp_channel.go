@@ -17,15 +17,13 @@ func NewTCPChannel(conn net.Conn) *TCPChannel {
 	return &TCPChannel{conn: conn}
 }
 
-func (t *TCPChannel) Read() (*protocol.Request, error) {
-	var req protocol.Request
-
+func (t *TCPChannel) Read(req *protocol.Request) (*jsoniter.Decoder, error) {
 	decoder := json.NewDecoder(t.conn)
 	if err := decoder.Decode(&req); err != nil {
 		return nil, err
 	}
 
-	return &req, nil
+	return decoder, nil
 }
 
 func (t *TCPChannel) Write(res *protocol.Response) error {

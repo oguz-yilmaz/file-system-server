@@ -1,46 +1,60 @@
 package resources
 
-type TextFile struct {
+const (
+	TEXT_FILE   = "text"
+	BINARY_FILE = "binary"
+	IMAGE_FILE  = "image"
+	PDF_FILE    = "pdf"
+	HTML_FILE   = "html"
+)
+
+type File struct {
 	/**
 	 * Name of the file
 	 */
 	Name string `json:"name"`
-
 	/**
 	 * Absolute path of the parent directory of the file
 	 */
 	Dir string `json:"dir"`
-
+	/**
+	 * The content of the file
+	 */
+	Content []byte `json:"content"`
+	/**
+	 * The size of the file in bytes
+	 */
+	Size *int `json:"size"`
+	/**
+	 * The type of the file, e.g. text, image, etc.
+	 */
+	FileType string `json:"fileType"`
 	/**
 	 * The version number of this document (it will increase after each
 	 * change, including undo/redo).
 	 */
 	Version *int `json:"version"`
-
 	/**
 	 * The extension of the TextFile
 	 */
 	Extension string `json:"extension"`
-
-	/**
-	 * The content of the opened text document.
-	 */
-	Text string `json:"text"`
-
 	/**
 	 * A map for storing any additional data
 	 */
 	MetaData map[string]interface{} `json:"metaData"`
-
 	/**
 	 * The MIME type of the file
 	 */
 	MIMEType *MIMEType `json:"mimeType, omitempty"`
-
 	/**
-	 * The size of the file in bytes
+	 * The permissions of the file, e.g. 0777
 	 */
-	Size *int `json:"size"`
+	Permissions int `json:"permissions"`
+}
+
+type TextFile struct {
+	File
+	Content string `json:"text"`
 }
 
 type MIMEType string
@@ -51,8 +65,6 @@ const (
 	MIMEImageJPEG      MIMEType = "image/jpeg"
 	MIMEImagePNG       MIMEType = "image/png"
 	MIMEApplicationPDF MIMEType = "application/pdf"
-
-	// Add more MIME types as needed
 )
 
 func (mt MIMEType) String() string {

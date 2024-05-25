@@ -3,6 +3,7 @@ package channels
 import (
 	"os"
 
+	jsoniter "github.com/json-iterator/go"
 	"github.com/oguz-yilmaz/file-system-server/pkg/protocol"
 )
 
@@ -15,22 +16,20 @@ func NewStdinTransport(in, out *os.File) *StdinChannel {
 	return &StdinChannel{in: in, out: out}
 }
 
-func (s *StdinChannel) Read() (*protocol.Request, error) {
-	var req protocol.Request
-
+func (s *StdinChannel) Read(req *protocol.Request) (*jsoniter.Decoder, error) {
 	// read from the stdin stream and write it to req struct
 	decoder := json.NewDecoder(s.in)
-	if err := decoder.Decode(&req); err != nil {
+	if err := decoder.Decode(req); err != nil {
 		return nil, err
 	}
 
-	return &req, nil
+	return decoder, nil
 }
 
 func (s *StdinChannel) Write(res *protocol.Response) error {
 	encoder := json.NewEncoder(s.out)
 
-	// Encode and write res struct into the stdout stream
+	// Write res struct into the stdout stream
 	return encoder.Encode(res)
 }
 

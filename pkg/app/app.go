@@ -6,9 +6,11 @@ import (
 	"net"
 	"os"
 
+	jsoniter "github.com/json-iterator/go"
 	Conf "github.com/oguz-yilmaz/file-system-server/pkg/config"
 	"github.com/oguz-yilmaz/file-system-server/pkg/protocol"
 	"github.com/oguz-yilmaz/file-system-server/pkg/protocol/channels"
+	"github.com/oguz-yilmaz/file-system-server/pkg/protocol/methods"
 )
 
 type App struct {
@@ -36,19 +38,37 @@ func makeChannel(config *Conf.Config) (protocol.TransportChannel, error) {
 func (app *App) StartServer() {
 	conf := Conf.NewDefaultConfig()
 
+	// this is not go channel, it is a channel for communication TCP, HTTP, RPC, etc.
 	channel, err := makeChannel(&conf)
 	if err != nil {
 		panic(err)
 	}
 
-	data, err := channel.Read()
+	var req = protocol.Request{}
+	_, err = channel.Read(&req)
 	if err != nil {
 		panic(err)
 	}
 
-	switch data.Method {
+	fmt.Println("Received :", &req)
+
+	switch req.Method {
 	case protocol.METHOD_CREATE_FILE:
 		fmt.Println("creating file")
+		var createFileParams = methods.NewCreateFileParams()
+		if err := jsoniter.Unmarshal([]byte(req.Params), &createFileParams); err != nil {
+			fmt.Println("Error decoding CreateFileRequest:", err)
+
+			return
+		}
+
+		fmt.Println("CreateFileParams:", createFileParams)
+		fmt.Println("CreateFileParams: Name:", createFileParams.Name)
+		fmt.Println("CreateFileParams: Content:", createFileParams.Content)
+		fmt.Println("CreateFileParams: Dir:", createFileParams.Dir)
+		fmt.Println("CreateFileParams: FileType:", createFileParams.FileType)
+		fmt.Println("CreateFileParams: Permissions:", createFileParams.Permissions)
+
 	case protocol.METHOD_READ_FILE:
 		fmt.Println("reading file")
 	case protocol.METHOD_DELETE_FILE:
@@ -74,8 +94,6 @@ func (app *App) StartServer() {
 	default:
 		fmt.Println("unknown method")
 	}
-
-	fmt.Println("Received :", data)
 }
 
 func Run(config *Conf.Config, startArgs []string) {
