@@ -1,5 +1,11 @@
 package resources
 
+import (
+	"path/filepath"
+
+	"github.com/oguz-yilmaz/file-system-server/pkg/fsmod/request"
+)
+
 const (
 	TEXT_FILE   = "text"
 	BINARY_FILE = "binary"
@@ -18,9 +24,10 @@ type File struct {
 	 */
 	Dir string `json:"dir"`
 	/**
-	 * The content of the file
+	* The content of the file
+	* TODO: Currently, we only support text files
 	 */
-	Content []byte `json:"content"`
+	Content string `json:"content"`
 	/**
 	 * The size of the file in bytes
 	 */
@@ -33,7 +40,7 @@ type File struct {
 	 * The version number of this document (it will increase after each
 	 * change, including undo/redo).
 	 */
-	Version *int `json:"version"`
+	Version int `json:"version"`
 	/**
 	 * The extension of the TextFile
 	 */
@@ -45,7 +52,7 @@ type File struct {
 	/**
 	 * The MIME type of the file
 	 */
-	MIMEType *MIMEType `json:"mimeType, omitempty"`
+	MIMEType MIMEType `json:"mimeType"`
 	/**
 	 * The permissions of the file, e.g. 0777
 	 */
@@ -69,4 +76,25 @@ const (
 
 func (mt MIMEType) String() string {
 	return string(mt)
+}
+
+func NewFile(fileParams *request.CreateFileParams) *File {
+	defaultFile := &File{
+		Version:     1,
+		MIMEType:    MIMETextPlain,
+		Permissions: 438, // 0666
+	}
+
+	if fileParams != nil {
+		ext := filepath.Ext(fileParams.Name)
+
+		defaultFile.Name = fileParams.Name
+		defaultFile.Dir = fileParams.Dir
+		defaultFile.Content = fileParams.Content
+		defaultFile.FileType = fileParams.FileType
+		defaultFile.Permissions = fileParams.Permissions
+		defaultFile.Extension = ext[1:] // Remove the leading dot from the extension
+	}
+
+	return defaultFile
 }

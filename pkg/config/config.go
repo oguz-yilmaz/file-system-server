@@ -1,5 +1,7 @@
 package config
 
+import "os"
+
 type TransferProtocol string
 
 const (
@@ -24,9 +26,18 @@ type Config struct {
 }
 
 func NewDefaultConfig() Config {
+	currentDir, err := os.Getwd()
+	if err != nil {
+		currentDir, err = os.UserHomeDir()
+
+		if err != nil {
+			panic(err)
+		}
+	}
+
 	return Config{
 		FileSystemConfig: FileSystemConfig{
-			RootPath: "/default/path",
+			RootPath: currentDir,
 		},
 		ProtocolConfig: ProtocolConfig{
 			TransferProtocol: STD_IN,

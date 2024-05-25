@@ -8,9 +8,10 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 	Conf "github.com/oguz-yilmaz/file-system-server/pkg/config"
+	"github.com/oguz-yilmaz/file-system-server/pkg/fsmod"
+	"github.com/oguz-yilmaz/file-system-server/pkg/fsmod/request"
 	"github.com/oguz-yilmaz/file-system-server/pkg/protocol"
 	"github.com/oguz-yilmaz/file-system-server/pkg/protocol/channels"
-	"github.com/oguz-yilmaz/file-system-server/pkg/protocol/methods"
 )
 
 type App struct {
@@ -38,7 +39,7 @@ func makeChannel(config *Conf.Config) (protocol.TransportChannel, error) {
 func (app *App) StartServer() {
 	conf := Conf.NewDefaultConfig()
 
-	// this is not go channel, it is a channel for communication TCP, HTTP, RPC, etc.
+	// Not a go channel, it is a channel for communication TCP, HTTP, RPC, etc.
 	channel, err := makeChannel(&conf)
 	if err != nil {
 		panic(err)
@@ -50,24 +51,41 @@ func (app *App) StartServer() {
 		panic(err)
 	}
 
-	fmt.Println("Received :", &req)
-
 	switch req.Method {
 	case protocol.METHOD_CREATE_FILE:
-		fmt.Println("creating file")
-		var createFileParams = methods.NewCreateFileParams()
+		var createFileParams = request.NewCreateFileParams()
 		if err := jsoniter.Unmarshal([]byte(req.Params), &createFileParams); err != nil {
 			fmt.Println("Error decoding CreateFileRequest:", err)
 
 			return
 		}
 
-		fmt.Println("CreateFileParams:", createFileParams)
-		fmt.Println("CreateFileParams: Name:", createFileParams.Name)
-		fmt.Println("CreateFileParams: Content:", createFileParams.Content)
-		fmt.Println("CreateFileParams: Dir:", createFileParams.Dir)
-		fmt.Println("CreateFileParams: FileType:", createFileParams.FileType)
-		fmt.Println("CreateFileParams: Permissions:", createFileParams.Permissions)
+		fmt.Printf("CreateFileParams: Name: Type(%T) Value(%v)\n", createFileParams.Name, createFileParams.Name)
+		fmt.Printf("CreateFileParams: Content: Type(%T) Value(%v)\n", createFileParams.Content, createFileParams.Content)
+		fmt.Printf("CreateFileParams: Dir: Type(%T) Value(%v)\n", createFileParams.Dir, createFileParams.Dir)
+		fmt.Printf("CreateFileParams: FileType: Type(%T) Value(%v)\n", createFileParams.FileType, createFileParams.FileType)
+		fmt.Printf("CreateFileParams: Permissions: Type(%T) Value(%v)\n", createFileParams.Permissions, createFileParams.Permissions)
+
+		// -- Validate the file name
+		if createFileParams.Name == "" {
+			fmt.Println("Error: File name is required")
+
+			return
+		}
+
+		// -- Valitade the directory
+		if createFileParams.Dir == "" {
+			createFileParams.Dir = conf.FileSystemConfig.RootPath
+		}
+
+		file, err := fsmod.CreateFile(createFileParams)
+		if err != nil {
+			fmt.Println("Error creating file:", err)
+
+			return
+		}
+
+		fmt.Println("Created file:", file)
 
 	case protocol.METHOD_READ_FILE:
 		fmt.Println("reading file")

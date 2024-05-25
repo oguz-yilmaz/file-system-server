@@ -1,8 +1,7 @@
-package methods
+package request
 
 import (
 	"github.com/oguz-yilmaz/file-system-server/pkg/protocol"
-	"github.com/oguz-yilmaz/file-system-server/pkg/protocol/resources"
 )
 
 type CreateFileRequest struct {
@@ -19,7 +18,7 @@ type CreateFileParams struct {
 	/**
 	 * The content of the file
 	 */
-	Content string `json:"text"`
+	Content string `json:"content"`
 	/**
 	 * The directory where the file should be created
 	 */
@@ -39,10 +38,4 @@ func NewCreateFileParams() *CreateFileParams {
 	return &CreateFileParams{
 		Permissions: 438, // 0666
 	}
-}
-
-type CreateFileResponse struct {
-	protocol.Response
-
-	Result resources.TextFile `json:"result"`
 }

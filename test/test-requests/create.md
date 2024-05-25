@@ -8,7 +8,7 @@
     "name": "example.txt",
     "dir": "/path/to/directory",
     "content": "this is an example file.",
-    "fileType": "txt",
+    "file-type": "txt",
     "permissions": 438
   }
 }
