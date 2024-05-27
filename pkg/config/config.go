@@ -36,6 +36,9 @@ func NewDefaultConfig() Config {
 	}
 
 	return Config{
+		GeneralConfig: GeneralConfig{
+			WorkerPool: 3,
+		},
 		FileSystemConfig: FileSystemConfig{
 			RootPath: currentDir,
 		},
