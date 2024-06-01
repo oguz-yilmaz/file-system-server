@@ -13,6 +13,7 @@ import (
 	"github.com/oguz-yilmaz/file-system-server/pkg/fsmod/response"
 	"github.com/oguz-yilmaz/file-system-server/pkg/protocol"
 	"github.com/oguz-yilmaz/file-system-server/pkg/protocol/channels"
+	"github.com/oguz-yilmaz/file-system-server/pkg/util"
 )
 
 type App struct {
@@ -53,7 +54,7 @@ func (app *App) StartServer(channel protocol.TransportChannel, conf Conf.Config)
 			return
 		}
 
-        PrintStruct(createFileParams, "")
+		util.PrintStruct(createFileParams, "CreateFileParams@")
 
 		// -- Validate the file name
 		if createFileParams.Name == "" {
@@ -76,6 +77,7 @@ func (app *App) StartServer(channel protocol.TransportChannel, conf Conf.Config)
 
 		fmt.Println("Created file:", file)
 
+		// write to stdout
 		successResponse := response.NewCreateFileSuccessResponse(req, file)
 		err = channel.Write(successResponse)
 
@@ -130,35 +132,4 @@ func NewApp(config *Conf.Config, startArgs []string) (App, error) {
 	app := App{}
 
 	return app, nil
-}
-
-func PrintStruct(v interface{}, prefix string) {
-	val := reflect.ValueOf(v)
-	if val.Kind() == reflect.Ptr {
-		val = val.Elem()  // Dereference pointers
-	}
-
-	if val.Kind() != reflect.Struct {
-		fmt.Printf("Expected a struct, got %s\n", val.Kind())
-		return
-	}
-
-	// Loop over the fields of the struct
-	for i := 0; i < val.NumField(); i++ {
-		field := val.Field(i)
-		fieldType := val.Type().Field(i)
-		fieldName := fieldType.Name
-
-		// Construct a prefix for nested fields
-		if prefix != "" {
-			fieldName = prefix + "." + fieldName
-		}
-
-		// Handle nested structs, except for time.Time or standard library types
-		if field.Kind() == reflect.Struct && !field.Type().PkgPath().StartsWith("time") {
-			PrintStruct(field.Interface(), fieldName)
-		} else {
-			fmt.Printf("%s: Type(%T) Value(%v)\n", fieldName, field.Interface(), field.Interface())
-		}
-	}
 }
