@@ -18,9 +18,17 @@ func CreateFile(params *request.CreateFileParams) (*resources.File, error) {
 	// Create the file, use the below function and pass the below
 	// file struct to it to create the file
 	fmt.Println("--- fsmod@CreateFile ---")
-	fmt.Println("Creating file at path: ", filePath)
+	fmt.Println("filePath: ", filePath)
 	fmt.Println("Content: ", params.Content)
 	fmt.Println("Permissions: ", fs.FileMode(params.Permissions))
+	fmt.Println("Overwrite: ", params.Overwrite)
+	fmt.Println("--- fsmod@CreateFile ---")
+
+	if !params.Overwrite {
+		if _, err := os.Stat(filePath); err == nil {
+			return nil, fmt.Errorf("file already exists")
+		}
+	}
 
 	err := os.WriteFile(filePath, []byte(params.Content), fs.FileMode(params.Permissions))
 	if err != nil {

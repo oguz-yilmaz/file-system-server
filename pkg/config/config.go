@@ -10,6 +10,10 @@ const (
 	STD_IN   TransferProtocol = "std-in"
 )
 
+type GeneralConfig struct {
+	WorkerPool int `key:"worker-pool"`
+}
+
 type FileSystemConfig struct {
 	RootPath string `key:"root-path"`
 }
@@ -21,6 +25,7 @@ type ProtocolConfig struct {
 }
 
 type Config struct {
+	GeneralConfig    `key:"general"`
 	FileSystemConfig `key:"file-system"`
 	ProtocolConfig   `key:"protocol"`
 }

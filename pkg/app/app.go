@@ -10,6 +10,7 @@ import (
 	Conf "github.com/oguz-yilmaz/file-system-server/pkg/config"
 	"github.com/oguz-yilmaz/file-system-server/pkg/fsmod"
 	"github.com/oguz-yilmaz/file-system-server/pkg/fsmod/request"
+	"github.com/oguz-yilmaz/file-system-server/pkg/fsmod/response"
 	"github.com/oguz-yilmaz/file-system-server/pkg/protocol"
 	"github.com/oguz-yilmaz/file-system-server/pkg/protocol/channels"
 )
@@ -36,17 +37,9 @@ func makeChannel(config *Conf.Config) (protocol.TransportChannel, error) {
 	}
 }
 
-func (app *App) StartServer() {
-	conf := Conf.NewDefaultConfig()
-
-	// Not a go channel, it is a channel for communication TCP, HTTP, RPC, etc.
-	channel, err := makeChannel(&conf)
-	if err != nil {
-		panic(err)
-	}
-
+func (app *App) StartServer(channel protocol.TransportChannel, conf Conf.Config) {
 	var req = protocol.Request{}
-	_, err = channel.Read(&req)
+	_, err := channel.Read(&req)
 	if err != nil {
 		panic(err)
 	}
@@ -60,11 +53,7 @@ func (app *App) StartServer() {
 			return
 		}
 
-		fmt.Printf("CreateFileParams: Name: Type(%T) Value(%v)\n", createFileParams.Name, createFileParams.Name)
-		fmt.Printf("CreateFileParams: Content: Type(%T) Value(%v)\n", createFileParams.Content, createFileParams.Content)
-		fmt.Printf("CreateFileParams: Dir: Type(%T) Value(%v)\n", createFileParams.Dir, createFileParams.Dir)
-		fmt.Printf("CreateFileParams: FileType: Type(%T) Value(%v)\n", createFileParams.FileType, createFileParams.FileType)
-		fmt.Printf("CreateFileParams: Permissions: Type(%T) Value(%v)\n", createFileParams.Permissions, createFileParams.Permissions)
+        PrintStruct(createFileParams, "")
 
 		// -- Validate the file name
 		if createFileParams.Name == "" {
@@ -86,6 +75,9 @@ func (app *App) StartServer() {
 		}
 
 		fmt.Println("Created file:", file)
+
+		successResponse := response.NewCreateFileSuccessResponse(req, file)
+		err = channel.Write(successResponse)
 
 	case protocol.METHOD_READ_FILE:
 		fmt.Println("reading file")
@@ -117,8 +109,15 @@ func (app *App) StartServer() {
 func Run(config *Conf.Config, startArgs []string) {
 	app, err := NewApp(config, startArgs)
 	if err == nil {
+		conf := Conf.NewDefaultConfig()
+		// Not a go channel, it is communication channel, e.g TCP, HTTP, RPC, etc.
+		channel, err := makeChannel(&conf)
+		if err != nil {
+			panic(err)
+		}
+
 		for {
-			app.StartServer()
+			app.StartServer(channel, conf)
 		}
 	}
 
@@ -131,4 +130,35 @@ func NewApp(config *Conf.Config, startArgs []string) (App, error) {
 	app := App{}
 
 	return app, nil
+}
+
+func PrintStruct(v interface{}, prefix string) {
+	val := reflect.ValueOf(v)
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()  // Dereference pointers
+	}
+
+	if val.Kind() != reflect.Struct {
+		fmt.Printf("Expected a struct, got %s\n", val.Kind())
+		return
+	}
+
+	// Loop over the fields of the struct
+	for i := 0; i < val.NumField(); i++ {
+		field := val.Field(i)
+		fieldType := val.Type().Field(i)
+		fieldName := fieldType.Name
+
+		// Construct a prefix for nested fields
+		if prefix != "" {
+			fieldName = prefix + "." + fieldName
+		}
+
+		// Handle nested structs, except for time.Time or standard library types
+		if field.Kind() == reflect.Struct && !field.Type().PkgPath().StartsWith("time") {
+			PrintStruct(field.Interface(), fieldName)
+		} else {
+			fmt.Printf("%s: Type(%T) Value(%v)\n", fieldName, field.Interface(), field.Interface())
+		}
+	}
 }

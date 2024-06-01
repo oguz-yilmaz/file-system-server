@@ -6,10 +6,11 @@
   "method": "createFile",
   "params": {
     "name": "example.txt",
-    "dir": "/path/to/directory",
+    "dir": ".",
     "content": "this is an example file.",
     "file-type": "txt",
-    "permissions": 438
+    "permissions": 438,
+    "overwrite": true
   }
 }
 ```
@@ -23,8 +24,9 @@
   "method": "createFile",
   "params": {
     "name": "another_file.txt",
-    "dir": "/path/to/another/directory",
-    "content": "This is another example file."
+    "dir": "./",
+    "content": "This is another example file.",
+    "overwrite": false
   }
 }
 ```

@@ -32,10 +32,15 @@ type CreateFileParams struct {
 	 * The permissions of the file, should be sent as decimal number like 438 (octal 0666)
 	 */
 	Permissions int `json:"permissions"`
+	/**
+	 * If the file should be overwritten if it already exists, default is false
+	 */
+	Overwrite bool `json:"overwrite"`
 }
 
 func NewCreateFileParams() *CreateFileParams {
 	return &CreateFileParams{
 		Permissions: 438, // 0666
+		Overwrite:   false,
 	}
 }

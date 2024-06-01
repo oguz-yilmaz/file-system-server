@@ -14,11 +14,11 @@ type Request struct {
 
 type Response struct {
 	RPC   string `json:"jsonrpc"`
-	ID    *int   `json:"id,omitempty"`
+	ID    int    `json:"id,omitempty"`
 	Error *Error `json:"error,omitempty"`
 
-	// We will just specify the type of the result in all the Response types separately
-	// Result
+	// Each specific Response type will define its own Result field
+	Result jsoniter.RawMessage `json:"result,omitempty"`
 }
 
 // Notification is a Request without an id
@@ -29,9 +29,9 @@ type Notification struct {
 
 // Error represents an error in the Response
 type Error struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-	Data    string `json:"data,omitempty"` // Optional: detailed error information etc.
+	Code    int     `json:"code"`
+	Message string  `json:"message"`
+	Data    *string `json:"data,omitempty"` // Optional: detailed error information etc.
 }
 
 const (
@@ -48,3 +48,6 @@ const (
 	METHOD_SEARCH      = "search"
 	METHOD_GET_INFO    = "getInfo"
 )
+
+// Handle Batch Requests @see https://www.jsonrpc.org/specification#batch
+// TODO: To send several Request objects at the same time, the Client MAY send an Array filled with Request objects.
