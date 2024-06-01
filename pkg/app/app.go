@@ -6,14 +6,10 @@ import (
 	"net"
 	"os"
 
-	jsoniter "github.com/json-iterator/go"
 	Conf "github.com/oguz-yilmaz/file-system-server/pkg/config"
 	"github.com/oguz-yilmaz/file-system-server/pkg/fsmod"
-	"github.com/oguz-yilmaz/file-system-server/pkg/fsmod/request"
-	"github.com/oguz-yilmaz/file-system-server/pkg/fsmod/response"
 	"github.com/oguz-yilmaz/file-system-server/pkg/protocol"
 	"github.com/oguz-yilmaz/file-system-server/pkg/protocol/channels"
-	"github.com/oguz-yilmaz/file-system-server/pkg/util"
 )
 
 type App struct {
@@ -47,39 +43,7 @@ func (app *App) StartServer(channel protocol.TransportChannel, conf Conf.Config)
 
 	switch req.Method {
 	case protocol.METHOD_CREATE_FILE:
-		var createFileParams = request.NewCreateFileParams()
-		if err := jsoniter.Unmarshal([]byte(req.Params), &createFileParams); err != nil {
-			fmt.Println("Error decoding CreateFileRequest:", err)
-
-			return
-		}
-
-		util.PrintStruct(createFileParams, "CreateFileParams@")
-
-		// -- Validate the file name
-		if createFileParams.Name == "" {
-			fmt.Println("Error: File name is required")
-
-			return
-		}
-
-		// -- Valitade the directory
-		if createFileParams.Dir == "" {
-			createFileParams.Dir = conf.FileSystemConfig.RootPath
-		}
-
-		file, err := fsmod.CreateFile(createFileParams)
-		if err != nil {
-			fmt.Println("Error creating file:", err)
-
-			return
-		}
-
-		fmt.Println("Created file:", file)
-
-		// write to stdout
-		successResponse := response.NewCreateFileSuccessResponse(req, file)
-		err = channel.Write(successResponse)
+		fsmod.HandleCreateFile(req, channel, conf)
 
 	case protocol.METHOD_READ_FILE:
 		fmt.Println("reading file")

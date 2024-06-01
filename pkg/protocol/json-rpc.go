@@ -29,9 +29,8 @@ type Notification struct {
 
 // Error represents an error in the Response
 type Error struct {
-	Code    int     `json:"code"`
-	Message string  `json:"message"`
-	Data    *string `json:"data,omitempty"` // Optional: detailed error information etc.
+	Code    int    `json:"code"`
+	Message string `json:"message"`
 }
 
 const (
@@ -48,6 +47,19 @@ const (
 	METHOD_SEARCH      = "search"
 	METHOD_GET_INFO    = "getInfo"
 )
+
+func NewError(code int, message string) *Error {
+	return &Error{
+		Code:    code,
+		Message: message,
+	}
+}
+
+func HandleError(channel TransportChannel, code int, errMsg string) {
+	e := NewError(code, errMsg)
+
+	channel.Write(e)
+}
 
 // Handle Batch Requests @see https://www.jsonrpc.org/specification#batch
 // TODO: To send several Request objects at the same time, the Client MAY send an Array filled with Request objects.

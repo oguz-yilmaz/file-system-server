@@ -26,7 +26,7 @@ func (s *StdinChannel) Read(req *protocol.Request) (*jsoniter.Decoder, error) {
 	return decoder, nil
 }
 
-func (s *StdinChannel) Write(res interface{}) error {
+func (s *StdinChannel) Write(res any) error {
 	encoder := json.NewEncoder(s.out)
 
 	// Write res struct into the stdout stream

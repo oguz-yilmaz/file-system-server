@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func PrintStruct(v interface{}, prefix string) {
+func PrintStruct(v any, prefix string) {
 	val := reflect.ValueOf(v)
 	if val.Kind() == reflect.Ptr {
 		val = val.Elem()

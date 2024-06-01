@@ -1,9 +1,7 @@
-package resources
+package fsmod
 
 import (
 	"path/filepath"
-
-	"github.com/oguz-yilmaz/file-system-server/pkg/fsmod/request"
 )
 
 const (
@@ -48,7 +46,7 @@ type File struct {
 	/**
 	 * A map for storing any additional data
 	 */
-	MetaData map[string]interface{} `json:"metaData"`
+	MetaData map[string]any `json:"metaData"`
 	/**
 	 * The MIME type of the file
 	 */
@@ -78,7 +76,7 @@ func (mt MIMEType) String() string {
 	return string(mt)
 }
 
-func NewFile(fileParams *request.CreateFileParams) *File {
+func NewFile(fileParams *CreateFileParams) *File {
 	defaultFile := &File{
 		Version:     1,
 		MIMEType:    MIMETextPlain,

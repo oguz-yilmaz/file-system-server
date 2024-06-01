@@ -2,6 +2,6 @@
 
 package util
 
-func PrintStruct(v interface{}, prefix string) {
+func PrintStruct(v any, prefix string) {
 
 }

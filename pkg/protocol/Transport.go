@@ -6,6 +6,6 @@ import (
 
 type TransportChannel interface {
 	Read(req *Request) (*jsoniter.Decoder, error)
-	Write(res interface{}) error
+	Write(res any) error
 	Close() error
 }

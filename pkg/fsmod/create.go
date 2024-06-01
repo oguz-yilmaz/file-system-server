@@ -5,12 +5,9 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-
-	"github.com/oguz-yilmaz/file-system-server/pkg/fsmod/request"
-	"github.com/oguz-yilmaz/file-system-server/pkg/protocol/resources"
 )
 
-func CreateFile(params *request.CreateFileParams) (*resources.File, error) {
+func CreateFile(params *CreateFileParams) (*File, error) {
 	cwd := params.Dir
 
 	filePath := filepath.Join(cwd, params.Name)
@@ -35,7 +32,7 @@ func CreateFile(params *request.CreateFileParams) (*resources.File, error) {
 		return nil, err
 	}
 
-	file := resources.NewFile(params)
+	file := NewFile(params)
 
 	// TODO: omit this as we have another method to get the file size
 	// or just count the bytes of the content to make it more efficient
@@ -49,6 +46,6 @@ func CreateFile(params *request.CreateFileParams) (*resources.File, error) {
 	return file, nil
 }
 
-func WriteFile(file *resources.TextFile) error {
+func WriteFile(file *TextFile) error {
 	return nil
 }
