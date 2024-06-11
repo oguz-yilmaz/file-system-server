@@ -30,7 +30,7 @@ func makeChannel(config *Conf.Config) (protocol.TransportChannel, error) {
 	case Conf.STD_IN:
 		return channels.NewStdinTransport(os.Stdin, os.Stdout), nil
 	default:
-		return nil, errors.New("Unknown protocol")
+		return nil, errors.New("unknown protocol")
 	}
 }
 

@@ -21,7 +21,7 @@ type CreateFileParams struct {
 	/**
 	 * The content of the file
 	 */
-	Content string `json:"content"`
+	Content string `json:"content"` // TODO use byte array instead?
 	/**
 	 * The directory where the file should be created
 	 */
@@ -41,10 +41,30 @@ type CreateFileParams struct {
 	Overwrite bool `json:"overwrite"`
 }
 
-func NewCreateFileParams() *CreateFileParams {
+func NewCreateFileParams(params map[string]any, conf Conf.Config) *CreateFileParams {
+	defaultPermissions := 438 // 0666
+	defaultOverwrite := true
+	defaultDir := conf.FileSystemConfig.RootPath
+
+	permissions, ok := params["permissions"].(int)
+	if !ok {
+		permissions = defaultPermissions
+	}
+
+	overwrite, ok := params["overwrite"].(bool)
+	if !ok {
+		overwrite = defaultOverwrite
+	}
+
+	dir, ok := params["dir"].(string)
+	if !ok {
+		dir = defaultDir
+	}
+
 	return &CreateFileParams{
-		Permissions: 438, // 0666
-		Overwrite:   false,
+		Permissions: permissions,
+		Overwrite:   overwrite,
+		Dir:         dir,
 	}
 }
 
@@ -58,15 +78,11 @@ func ValidateCreateRequest(c CreateFileParams, ch protocol.TransportChannel, con
 		return false, c
 	}
 
-	if c.Dir == "" {
-		c.Dir = conf.FileSystemConfig.RootPath
-	}
-
 	return true, c
 }
 
 func HandleCreateFile(req protocol.Request, channel protocol.TransportChannel, conf Conf.Config) {
-	var createFileParams = NewCreateFileParams()
+	var createFileParams = NewCreateFileParams(map[string]any{}, conf)
 	if err := jsoniter.Unmarshal([]byte(req.Params), &createFileParams); err != nil {
 		protocol.HandleError(channel, 123, "Error decoding CreateFileRequest")
 	}
