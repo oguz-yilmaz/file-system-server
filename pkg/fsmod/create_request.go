@@ -25,20 +25,20 @@ type CreateFileParams struct {
 	/**
 	 * The directory where the file should be created
 	 */
-	Dir string `json:"dir"`
+	Dir string `json:"dir,omitempty"`
 	/**
 	 * The type of the file, e.g. text, image, etc.
 	 * Not always possible to infer from the extension, it might not be present
 	 */
-	FileType string `json:"file-type"`
+	FileType string `json:"file-type,omitempty"`
 	/**
 	 * The permissions of the file, should be sent as decimal number like 438 (octal 0666)
 	 */
-	Permissions int `json:"permissions"`
+	Permissions int `json:"permissions,omitempty"`
 	/**
 	 * If the file should be overwritten if it already exists, default is false
 	 */
-	Overwrite bool `json:"overwrite"`
+	Overwrite bool `json:"overwrite,omitempty"`
 }
 
 func NewCreateFileParams(params map[string]any, conf Conf.Config) *CreateFileParams {
