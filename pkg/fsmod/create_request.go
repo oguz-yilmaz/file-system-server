@@ -1,6 +1,8 @@
 package fsmod
 
 import (
+	"path/filepath"
+
 	jsoniter "github.com/json-iterator/go"
 	Conf "github.com/oguz-yilmaz/file-system-server/pkg/config"
 	"github.com/oguz-yilmaz/file-system-server/pkg/protocol"
@@ -21,7 +23,7 @@ type CreateFileParams struct {
 	/**
 	 * The content of the file
 	 */
-	Content string `json:"content"` // TODO use byte array instead?
+	Content []byte `json:"content"`
 	/**
 	 * The directory where the file should be created
 	 */
@@ -44,7 +46,7 @@ type CreateFileParams struct {
 func NewCreateFileParams(params map[string]any, conf Conf.Config) *CreateFileParams {
 	defaultPermissions := 438 // 0666
 	defaultOverwrite := true
-	defaultDir := conf.FileSystemConfig.RootPath
+	rootDir := conf.FileSystemConfig.RootPath
 
 	permissions, ok := params["permissions"].(int)
 	if !ok {
@@ -56,9 +58,19 @@ func NewCreateFileParams(params map[string]any, conf Conf.Config) *CreateFilePar
 		overwrite = defaultOverwrite
 	}
 
+	root, ok := params["root"].(string)
+	if ok {
+		rootDir = root
+	}
+
 	dir, ok := params["dir"].(string)
 	if !ok {
-		dir = defaultDir
+		dir = rootDir
+	}
+
+	// if dir is relative, then make it relative to the rootDir
+	if !filepath.IsAbs(dir) {
+		dir = filepath.Join(rootDir, dir)
 	}
 
 	return &CreateFileParams{

@@ -55,6 +55,7 @@ can use to interact with the server.
   "params": {
     "name": "example.txt",
     "dir": ".",
+    "root": "/tmp",
     "content": "this is an example file.",
     "file-type": "txt",
     "permissions": 438,
@@ -67,10 +68,13 @@ can use to interact with the server.
 
 #### createFile: Creates a new file.
 
-- **name**: Name of the file.
+- **name**: Name of the file. If you only want to create empty directories, you
+can set the name to an empty string or omit entirely.
 - **dir**: Directory where the file will be created (optional).
 - **content**: Content of the file.
 - **file-type**: Type of the file (optional).
+- **root**: Root directory of the file system. Only used if `dir` is relative
+(optional).
 - **permissions**: Permissions for the file (optional).
 - **overwrite**: Boolean to indicate if existing files should be overwritten
 (optional).

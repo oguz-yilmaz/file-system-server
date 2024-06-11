@@ -50,6 +50,25 @@ func TestOverridesTheContent(t *testing.T) {
 	}
 }
 
+func TestCreatesFileInCorrectDirectory(t *testing.T) {
+	tempDir := t.TempDir()
+
+	file, err := createFile(map[string]any{
+		"name":      "example.txt",
+		"content":   "this is an example file.",
+		"dir":       "./test",
+		"root":      tempDir,
+		"file-type": "txt",
+		"overwrite": true,
+	}, tempDir, t)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	ensureFileIsCreated(*file, t)
+}
+
 func TestCreatesFile(t *testing.T) {
 	tempDir := t.TempDir()
 
@@ -81,7 +100,7 @@ func ensureFileIsCreated(file File, t *testing.T) (fs.FileInfo, string) {
 		return nil, ""
 	}
 
-	if file.Content != string(content) {
+	if string(file.Content) != string(content) {
 		t.Error("Content is not correct")
 	}
 
@@ -124,7 +143,11 @@ func createFileParamsJsonString(params map[string]any) string {
 		jsonMap["name"] = val.(string)
 	}
 	if val, exists := params["content"]; exists {
-		jsonMap["content"] = val.(string)
+		if content, ok := val.([]byte); ok {
+			jsonMap["content"] = content
+		} else if contentStr, ok := val.(string); ok {
+			jsonMap["content"] = []byte(contentStr) // Convert string to []byte if necessary
+		}
 	}
 	if val, exists := params["file-type"]; exists {
 		jsonMap["file-type"] = val.(string)

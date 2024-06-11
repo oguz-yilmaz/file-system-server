@@ -25,7 +25,7 @@ type File struct {
 	* The content of the file
 	* TODO: Currently, we only support text files
 	 */
-	Content string `json:"content"`
+	Content []byte `json:"content"`
 	/**
 	 * The size of the file in bytes
 	 */

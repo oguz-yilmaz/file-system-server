@@ -18,7 +18,7 @@ func CreateFile(params *CreateFileParams) (*File, error) {
 		}
 	}
 
-	err := os.WriteFile(filePath, []byte(params.Content), fs.FileMode(params.Permissions))
+	err := os.WriteFile(filePath, params.Content, fs.FileMode(params.Permissions))
 	if err != nil {
 		return nil, err
 	}
