@@ -24,36 +24,18 @@ func createFileParamsJsonString(params map[string]string) string {
 	return req
 }
 
-func TestCreateFile(t *testing.T) {
-	// creates a new temp dir, clear everything inside when the test has completed
-	tempDir := t.TempDir()
-
-	req := createFileParamsJsonString(map[string]string{
+func TestCreatesFile1(t *testing.T) {
+	file := createFile(map[string]string{
 		"name":        "example.txt",
 		"content":     "this is an example file.",
 		"file-type":   "txt",
 		"permissions": "438",
 		"overwrite":   "true",
-		"dir":         tempDir,
-	})
+	}, t)
 
-	conf := Conf.NewDefaultConfig()
-	cfp := NewCreateFileParams(map[string]any{
-		"dir": tempDir,
-	}, conf)
+	fullPath := filepath.Join(file.Dir, file.Name)
 
-	if err := jsoniter.Unmarshal([]byte(req), &cfp); err != nil {
-		t.Error(err)
-	}
-
-	file, err := CreateFile(cfp)
-	if err != nil {
-		t.Error(err)
-	}
-
-	fullPath := filepath.Join(tempDir, file.Name)
-
-	info, err := os.Stat(fullPath)
+	info, err := os.Stat(fullPath) // ensure the file is created
 	if err != nil {
 		t.Error(err)
 	}
@@ -76,4 +58,28 @@ func TestCreateFile(t *testing.T) {
 	if info.IsDir() != false {
 		t.Error("File is not a file, it is a directory")
 	}
+}
+
+func createFile(params map[string]string, t *testing.T) *File {
+	// creates a new temp dir, clear everything inside when the test has completed
+	tempDir := t.TempDir()
+
+	params["dir"] = tempDir
+	req := createFileParamsJsonString(params)
+
+	conf := Conf.NewDefaultConfig()
+	cfp := NewCreateFileParams(map[string]any{
+		"dir": tempDir,
+	}, conf)
+
+	if err := jsoniter.Unmarshal([]byte(req), &cfp); err != nil {
+		t.Error(err)
+	}
+
+	file, err := CreateFile(cfp)
+	if err != nil {
+		t.Error(err)
+	}
+
+	return file
 }
