@@ -25,6 +25,15 @@ type CreateFileParams struct {
 	 */
 	Content []byte `json:"content"`
 	/**
+	 * if directories should be created if not present, default is false
+	 */
+	CreateDirs bool `json:"create-dirs,omitempty"`
+	/**
+	 * The permissions of the directory, should be sent as decimal number like 438 (octal 0666).
+	 * Default is 0755, only used if create-dirs is true
+	 */
+	CreateDirPermissions int `json:"create-dir-permissions,omitempty"`
+	/**
 	 * The directory where the file should be created
 	 */
 	Dir string `json:"dir,omitempty"`
@@ -47,6 +56,7 @@ func NewCreateFileParams(params map[string]any, conf Conf.Config) *CreateFilePar
 	defaultPermissions := 438 // 0666
 	defaultOverwrite := true
 	rootDir := conf.FileSystemConfig.RootPath
+	dirPermissions := 0755
 
 	permissions, ok := params["permissions"].(int)
 	if !ok {
@@ -68,15 +78,27 @@ func NewCreateFileParams(params map[string]any, conf Conf.Config) *CreateFilePar
 		dir = rootDir
 	}
 
+	createDirs, ok := params["create-dirs"].(bool)
+	if !ok {
+		createDirs = false
+	} else {
+		createDirPermissions, ok := params["create-dir-permissions"].(int)
+		if ok {
+			dirPermissions = createDirPermissions
+		}
+	}
+
 	// if dir is relative, then make it relative to the rootDir
 	if !filepath.IsAbs(dir) {
 		dir = filepath.Join(rootDir, dir)
 	}
 
 	return &CreateFileParams{
-		Permissions: permissions,
-		Overwrite:   overwrite,
-		Dir:         dir,
+		Permissions:          permissions,
+		Overwrite:            overwrite,
+		Dir:                  dir,
+		CreateDirs:           createDirs,
+		CreateDirPermissions: dirPermissions,
 	}
 }
 

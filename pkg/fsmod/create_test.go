@@ -54,12 +54,13 @@ func TestCreatesFileInCorrectDirectory(t *testing.T) {
 	tempDir := t.TempDir()
 
 	file, err := createFile(map[string]any{
-		"name":      "example.txt",
-		"content":   "this is an example file.",
-		"dir":       "./test",
-		"root":      tempDir,
-		"file-type": "txt",
-		"overwrite": true,
+		"name":        "example.txt",
+		"content":     "this is an example file.",
+		"dir":         "./test",
+		"root":        tempDir,
+		"file-type":   "txt",
+		"create-dirs": true,
+		"overwrite":   true,
 	}, tempDir, t)
 
 	if err != nil {
@@ -67,6 +68,11 @@ func TestCreatesFileInCorrectDirectory(t *testing.T) {
 	}
 
 	ensureFileIsCreated(*file, t)
+	fullPath := filepath.Join(tempDir, "./test", file.Name)
+
+	if fullPath != filepath.Join(file.Dir, file.Name) {
+		t.Error("Directory is not correct")
+	}
 }
 
 func TestCreatesFile(t *testing.T) {
@@ -116,13 +122,14 @@ func ensureFileIsCreated(file File, t *testing.T) (fs.FileInfo, string) {
 }
 
 func createFile(params map[string]any, dir string, t *testing.T) (*File, error) {
-	params["dir"] = dir
+	if _, exists := params["dir"]; !exists {
+		params["dir"] = dir
+	}
+
 	req := createFileParamsJsonString(params)
 
 	conf := Conf.NewDefaultConfig()
-	cfp := NewCreateFileParams(map[string]any{
-		"dir": dir,
-	}, conf)
+	cfp := NewCreateFileParams(params, conf)
 
 	if err := jsoniter.Unmarshal([]byte(req), &cfp); err != nil {
 		t.Error("Error decoding CreateFileRequest")
@@ -146,7 +153,7 @@ func createFileParamsJsonString(params map[string]any) string {
 		if content, ok := val.([]byte); ok {
 			jsonMap["content"] = content
 		} else if contentStr, ok := val.(string); ok {
-			jsonMap["content"] = []byte(contentStr) // Convert string to []byte if necessary
+			jsonMap["content"] = []byte(contentStr)
 		}
 	}
 	if val, exists := params["file-type"]; exists {

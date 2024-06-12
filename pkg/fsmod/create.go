@@ -18,9 +18,17 @@ func CreateFile(params *CreateFileParams) (*File, error) {
 		}
 	}
 
-	err := os.WriteFile(filePath, params.Content, fs.FileMode(params.Permissions))
-	if err != nil {
-		return nil, err
+	var err error
+	if params.CreateDirs {
+		err = createFileWithDirs(filePath, params.Content, fs.FileMode(params.Permissions), fs.FileMode(params.CreateDirPermissions))
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		err = os.WriteFile(filePath, params.Content, fs.FileMode(params.Permissions))
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	file := NewFile(params)
@@ -37,6 +45,16 @@ func CreateFile(params *CreateFileParams) (*File, error) {
 	return file, nil
 }
 
-func WriteFile(file *TextFile) error {
+func createFileWithDirs(filePath string, content []byte, permissions os.FileMode, dirPermissions os.FileMode) error {
+	dir := filepath.Dir(filePath)
+	if err := os.MkdirAll(dir, dirPermissions); err != nil {
+		return err
+	}
+
+	err := os.WriteFile(filePath, content, permissions)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
