@@ -119,6 +119,7 @@ func HandleCreateFile(req protocol.Request, channel protocol.TransportChannel, c
 	var createFileParams = NewCreateFileParams(map[string]any{}, conf)
 	if err := jsoniter.Unmarshal([]byte(req.Params), &createFileParams); err != nil {
 		protocol.HandleError(channel, 123, "Error decoding CreateFileRequest")
+		return
 	}
 	util.PrintStruct(createFileParams, "CreateFileParams@")
 

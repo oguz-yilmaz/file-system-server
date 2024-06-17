@@ -11,6 +11,8 @@ import (
 	Conf "github.com/oguz-yilmaz/file-system-server/pkg/config"
 )
 
+// tests mainly CreateFile function of create.go
+
 func TestOverridesTheContent(t *testing.T) {
 	tempDir := t.TempDir()
 
@@ -122,11 +124,7 @@ func ensureFileIsCreated(file File, t *testing.T) (fs.FileInfo, string) {
 }
 
 func createFile(params map[string]any, dir string, t *testing.T) (*File, error) {
-	if _, exists := params["dir"]; !exists {
-		params["dir"] = dir
-	}
-
-	req := createFileParamsJsonString(params)
+	req := createFileParamsJsonString(params, dir)
 
 	conf := Conf.NewDefaultConfig()
 	cfp := NewCreateFileParams(params, conf)
@@ -143,8 +141,12 @@ func createFile(params map[string]any, dir string, t *testing.T) (*File, error) 
 	return file, nil
 }
 
-func createFileParamsJsonString(params map[string]any) string {
+func createFileParamsJsonString(params map[string]any, dir string) string {
 	jsonMap := make(map[string]any)
+
+	if _, exists := params["dir"]; !exists {
+		jsonMap["dir"] = dir
+	}
 
 	if val, exists := params["name"]; exists {
 		jsonMap["name"] = val.(string)
