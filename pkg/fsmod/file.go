@@ -75,23 +75,25 @@ func (mt MIMEType) String() string {
 	return string(mt)
 }
 
-func NewFile(fileParams *CreateFileParams) *File {
-	defaultFile := &File{
+func NewFileFromCreateFileParams(fileParams *CreateFileParams) *File {
+	file := NewFile()
+
+	ext := filepath.Ext(fileParams.Name)
+
+	file.Name = fileParams.Name
+	file.Dir = fileParams.Dir
+	file.Content = fileParams.Content
+	file.FileType = fileParams.FileType
+	file.Permissions = fileParams.Permissions
+	file.Extension = ext[1:] // Remove the leading dot from the extension
+
+	return file
+}
+
+func NewFile() *File {
+	return &File{
 		Version:     1,
 		MIMEType:    MIMETextPlain,
 		Permissions: 438, // 0666
 	}
-
-	if fileParams != nil {
-		ext := filepath.Ext(fileParams.Name)
-
-		defaultFile.Name = fileParams.Name
-		defaultFile.Dir = fileParams.Dir
-		defaultFile.Content = fileParams.Content
-		defaultFile.FileType = fileParams.FileType
-		defaultFile.Permissions = fileParams.Permissions
-		defaultFile.Extension = ext[1:] // Remove the leading dot from the extension
-	}
-
-	return defaultFile
 }

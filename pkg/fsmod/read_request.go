@@ -17,7 +17,7 @@ type ReadFileParams struct {
 	/**
 	 * The path of the file to read
 	 */
-	Path string `json:"path"`
+	Name string `json:"path"`
 	/**
 	 * The path of the parent directory of the file
 	 */
@@ -46,15 +46,16 @@ type ReadFileParams struct {
 
 func NewReadFileParams(params map[string]any, conf Conf.Config) *ReadFileParams {
 	readFileParams := &ReadFileParams{
-		Path:        conf.RootPath,
+		Name:        "",
+		Dir:         conf.RootPath,
 		Binary:      false,
 		MaxBytes:    0,
 		Offset:      0,
 		CheckExists: false,
 	}
 
-	if path, ok := params["path"].(string); ok {
-		readFileParams.Path = path
+	if name, ok := params["name"].(string); ok {
+		readFileParams.Name = name
 	}
 	if dir, ok := params["dir"].(string); ok {
 		if !filepath.IsAbs(dir) {
@@ -80,7 +81,7 @@ func NewReadFileParams(params map[string]any, conf Conf.Config) *ReadFileParams 
 }
 
 func ValidateReadFileParams(params ReadFileParams) error {
-	if params.Path == "" {
+	if params.Name == "" {
 		return NewInvalidParamsError()
 	}
 

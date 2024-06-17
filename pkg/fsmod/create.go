@@ -31,7 +31,7 @@ func CreateFile(params *CreateFileParams) (*File, error) {
 		}
 	}
 
-	file := NewFile(params)
+	file := NewFileFromCreateFileParams(params)
 	file.Size = len(params.Content)
 
 	return file, nil

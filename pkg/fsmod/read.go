@@ -9,7 +9,7 @@ import (
 
 func ReadFile(params *ReadFileParams) (*File, error) {
 	if params.CheckExists {
-		if _, err := os.Stat(params.Path); err != nil {
+		if _, err := os.Stat(params.Name); err != nil {
 			if os.IsNotExist(err) {
 				return nil, errors.New("file does not exist")
 			}
@@ -17,7 +17,7 @@ func ReadFile(params *ReadFileParams) (*File, error) {
 		}
 	}
 
-	file, err := os.Open(params.Path)
+	file, err := os.Open(params.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -47,5 +47,10 @@ func ReadFile(params *ReadFileParams) (*File, error) {
 		return &File{Content: encoded}, nil
 	}
 
-	return &File{Content: string(content), Name: params.Path}, nil
+	respFile := NewFile()
+	respFile.Size = len(content)
+	respFile.Content = string(content)
+	respFile.Name = params.Name
+
+	return respFile, nil
 }
