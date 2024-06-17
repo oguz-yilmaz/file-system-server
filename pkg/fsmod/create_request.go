@@ -23,7 +23,7 @@ type CreateFileParams struct {
 	/**
 	 * The content of the file
 	 */
-	Content []byte `json:"content"`
+	Content string `json:"content"`
 	/**
 	 * if directories should be created if not present, default is false
 	 */

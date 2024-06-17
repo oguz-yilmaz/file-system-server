@@ -152,11 +152,7 @@ func createFileParamsJsonString(params map[string]any, dir string) string {
 		jsonMap["name"] = val.(string)
 	}
 	if val, exists := params["content"]; exists {
-		if content, ok := val.([]byte); ok {
-			jsonMap["content"] = content
-		} else if contentStr, ok := val.(string); ok {
-			jsonMap["content"] = []byte(contentStr)
-		}
+		jsonMap["content"] = val.(string)
 	}
 	if val, exists := params["file-type"]; exists {
 		jsonMap["file-type"] = val.(string)

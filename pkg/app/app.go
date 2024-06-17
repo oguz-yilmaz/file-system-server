@@ -46,7 +46,7 @@ func (app *App) StartServer(channel protocol.TransportChannel, conf Conf.Config)
 		fsmod.HandleCreateFile(req, channel, conf)
 
 	case protocol.METHOD_READ_FILE:
-		fmt.Println("reading file")
+		fsmod.HandleReadFile(req, channel, conf)
 	case protocol.METHOD_DELETE_FILE:
 		fmt.Println("deleting file")
 	case protocol.METHOD_LIST_FILES:

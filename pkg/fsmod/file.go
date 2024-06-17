@@ -22,14 +22,13 @@ type File struct {
 	 */
 	Dir string `json:"dir"`
 	/**
-	* The content of the file
-	* TODO: Currently, we only support text files
+	 * The content of the file
 	 */
-	Content []byte `json:"content"`
+	Content string `json:"content"`
 	/**
 	 * The size of the file in bytes
 	 */
-	Size *int `json:"size"`
+	Size int `json:"size"`
 	/**
 	 * The type of the file, e.g. text, image, etc.
 	 */
