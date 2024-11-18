@@ -1,5 +1,7 @@
 ## File System Server
 
+⚠️ THIS IS A WORK IN PROGRESS. ⚠️
+
 Welcome to the File System Server Daemon! This project is a simple file system
 server written in Golang. It allows you to create, edit, and delete files and
 directories by sending JSON data. Communication with the server is done using
@@ -7,21 +9,21 @@ the JSON-RPC protocol.
 
 ### Features
 
-- **Create Files**: Create new files with specified content, type, and permissions.
-- **Edit Files**: Modify existing files.
-- **Delete Files**: Remove files from the file system.
-- **Directory Management**: Handle files within specified directories.
+-   **Create Files**: Create new files with specified content, type, and permissions.
+-   **Edit Files**: Modify existing files.
+-   **Delete Files**: Remove files from the file system.
+-   **Directory Management**: Handle files within specified directories.
 
 ### Getting Started
 
 #### Installation
 
-- Download the binary from the [releases
-page](https://github.com/oguz-yilmaz/file-system-server/releases)
+-   Download the binary from the [releases
+    page](https://github.com/oguz-yilmaz/file-system-server/releases)
 
 Or
 
-- Clone the repository and build the binary with the following command:
+-   Clone the repository and build the binary with the following command:
 
 ```bash
 git clone https://github.com/oguz-yilmaz/file-system-server.git
@@ -31,14 +33,14 @@ go build -o fss cmd/fss/main.go
 
 #### Running the Server
 
-- Run the server with the following command:
+-   Run the server with the following command:
 
 ```bash
 ./fss -c tcp -a localhost:8080 -d /tmp
 ```
 
-- The server will start listening on `localhost:8080` and set the root
-directory to `/tmp`.
+-   The server will start listening on `localhost:8080` and set the root
+    directory to `/tmp`.
 
 #### Usage
 
@@ -49,18 +51,18 @@ can use to interact with the server.
 
 ```json
 {
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "createFile",
-  "params": {
-    "name": "example.txt",
-    "dir": ".",
-    "root": "/tmp",
-    "content": "this is an example file.",
-    "file-type": "txt",
-    "permissions": 438,
-    "overwrite": true
-  }
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "createFile",
+    "params": {
+        "name": "example.txt",
+        "dir": ".",
+        "root": "/tmp",
+        "content": "this is an example file.",
+        "file-type": "txt",
+        "permissions": 438,
+        "overwrite": true
+    }
 }
 ```
 
@@ -68,25 +70,25 @@ can use to interact with the server.
 
 #### createFile: Creates a new file.
 
-- **name**: Name of the file. If you only want to create empty directories, you
-can set the name to an empty string or omit entirely.
-- **dir**: Directory where the file will be created (optional).
-- **content**: Content of the file.
-- **file-type**: Type of the file (optional).
-- **root**: Root directory of the file system. Only used if `dir` is relative
-(optional).
-- **permissions**: Permissions for the file (optional).
-- **overwrite**: Boolean to indicate if existing files should be overwritten
-(optional).
+-   **name**: Name of the file. If you only want to create empty directories, you
+    can set the name to an empty string or omit entirely.
+-   **dir**: Directory where the file will be created (optional).
+-   **content**: Content of the file.
+-   **file-type**: Type of the file (optional).
+-   **root**: Root directory of the file system. Only used if `dir` is relative
+    (optional).
+-   **permissions**: Permissions for the file (optional).
+-   **overwrite**: Boolean to indicate if existing files should be overwritten
+    (optional).
 
 #### editFile: Edits an existing file.
 
-- (similar parameters as createFile)
+-   (similar parameters as createFile)
 
 #### deleteFile: Deletes a specified file.
 
-- **name**: Name of the file.
-- **dir**: Directory where the file is located (optional).
+-   **name**: Name of the file.
+-   **dir**: Directory where the file is located (optional).
 
 ### Example JSON-RPC Client
 
@@ -155,6 +157,32 @@ fss.stdin.write('{
 }');
 ```
 
+## 🗺️Implementation Roadmap
+
+Current status of SFTP protocol methods implementation:
+
+### ✅ Implemented
+
+-   `METHOD_CREATE_FILE` - File creation
+-   `METHOD_READ_FILE` - File reading
+
+### 🚧 In Progress/Planned
+
+The following methods are planned but not yet fully implemented:
+
+-   `METHOD_DELETE_FILE` - Delete a file
+-   `METHOD_LIST_FILES` - List files in directory
+-   `METHOD_CREATE_DIR` - Create directory
+-   `METHOD_DELETE_DIR` - Delete directory
+-   `METHOD_LIST_DIRS` - List directories
+-   `METHOD_MOVE` - Move/rename files
+-   `METHOD_COPY` - Copy files
+-   `METHOD_RENAME` - Rename files
+-   `METHOD_SEARCH` - Search for files
+-   `METHOD_GET_INFO` - Get file information
+
+> Note: This is a work in progress. PRs and contributions are welcome! Please check issues for ongoing development.
+
 ### Contributing
 
 Feel free to fork the repository and submit pull requests. For major changes,
@@ -163,4 +191,3 @@ please open an issue first to discuss what you would like to change.
 ### License
 
 This project is licensed under the MIT License.
-
